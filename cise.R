@@ -119,24 +119,24 @@ if(length(TDP)>5000){
 }
 write.arff(ttt,file="tempfile.arff")
 
-out = system("java -cp /usr/share/java/weka.jar -mx1024m weka.clusterers.EM -t tempfile.arff -I 1000 -N -1 -X 10 -max -1 -ll-cv 1.0E-6 -ll-iter 1.0E-6 -M 1.0E-6 -K 500 -num-slots 1 -S 100",TRUE)
-
-clusterNum = 0
-
-for(c in 1 : length(out)) {
-  if(out[c] == "Clustered Instances") {
-    c = c + 1
-    for(p in c : length(out)) {
-      if(out[p] != "") {
-        clusterNum = clusterNum + 1;
-      }else {
-        break
-      }
-    }
-    break
-  }
-}
-
+# out = system("java -cp /usr/share/java/weka.jar -mx1024m weka.clusterers.EM -t tempfile.arff -I 1000 -N -1 -X 10 -max -1 -ll-cv 5.0E-7 -ll-iter 5.0E-7 -M 5.0E-7 -K 500 -num-slots 3 -S 100",TRUE)
+# 
+# clusterNum = 0
+# 
+# for(c in 1 : length(out)) {
+#   if(out[c] == "Clustered Instances") {
+#     c = c + 1
+#     for(p in c : length(out)) {
+#       if(out[p] != "") {
+#         clusterNum = clusterNum + 1;
+#       }else {
+#         break
+#       }
+#     }
+#     break
+#   }
+# }
+clusterNum=2
 runSKM= data.frame(TFA,BQ,NAD2)
 AAAA=SimpleKMeans(runSKM,Weka_control(N=clusterNum,S=100))
 
@@ -159,7 +159,7 @@ for(j in 1 : (clusterNum)){
       m0[kk0]=TAD2[i]/(TAD1[i]+TAD2[i])
       
       if(is.na(BBAF[i])){
-
+        
       }else{
         B0[mk0]=BBAF[i]
         mk0=mk0+1
@@ -177,30 +177,38 @@ for(i in 1 : clusterNum ){
     tempi = i
   }
 }
-
-resultNum[tempi]=resultNum[1]
-cellularity[tempi]=cellularity[1]
-cellularity[1]=0
-resultNum[1]=0
-anscel=cellularity[2:length(cellularity)]
-ansnum=resultNum[2:length(resultNum)]
-anscluster=NULL
-clustercount=1
-for(i in 1:length(AAAA$class_ids)){
-  if(AAAA$class_ids[i]!=tempi-1){
-    anscluster[clustercount]=AAAA$class_ids[i]
-    clustercount=clustercount+1
-  }
-}
-if(tempi!=1){
-  for(i in 1:length(anscluster)){
-    if(anscluster[i]==0){
-      anscluster[i]=tempi-1
+tcell=cellularity[clusterNum]
+tresu=resultNum[length(resultNum)]
+cellularity[length(cellularity)]=cellularity[tempi]
+resultNum[length(resultNum)]=resultNum[tempi]
+cellularity[tempi]=tcell
+resultNum[tempi]=tresu
+clust = clust + 1
+#resultNum[tempi]=resultNum[1]
+#cellularity[tempi]=cellularity[1]
+#cellularity[1]=0
+#resultNum[1]=0
+#anscel=cellularity[2:length(cellularity)]
+#ansnum=resultNum[2:length(resultNum)]
+#anscluster=NULL
+#clustercount=1
+#for(i in 1:length(AAAA$class_ids)){
+#  if(AAAA$class_ids[i]!=tempi-1){
+#    anscluster[clustercount]=AAAA$class_ids[i]
+#    clustercount=clustercount+1
+#  }
+#}
+if(tempi!=clusterNum){
+  for(i in 1:length(clust)){
+    if(clust[i]==tempi){
+      clust[i]=clusterNum
+    }else if (clust[i]==clusterNum){
+      clust[i]=tempi
     }
   }
 }
-
-write.table(max(anscel),"subchallenge1A.txt",row.names=F,col.names=F,quote=F,sep="\t")
+  
+write.table(max(cellularity),"subchallenge1A.txt",row.names=F,col.names=F,quote=F,sep="\t")
 write.table(clusterNum-1,"subchallenge1B.txt",row.names=F,col.names=F,quote=F,sep="\t")
-write.table(cbind(1:(clusterNum-1),table(anscluster),anscel),"subchallenge1C.txt",row.names=F,col.names=F,quote=F,sep="\t")
-write.table(anscluster,"subchallenge2A.txt",row.names=F,col.names=F,quote=F,sep="\t")
+write.table(cbind(1:clusterNum,resultNum,cellularity),"subchallenge1C.txt",row.names=F,col.names=F,quote=F,sep="\t")
+write.table(clust,"subchallenge2A.txt",row.names=F,col.names=F,quote=F,sep="\t")

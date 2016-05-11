@@ -1,8 +1,8 @@
 <tool id="R" name="cise" version="1.0.0">
 	<description>clustering</description>
-	<requirements>
-		<container type="docker">wind910037/fv</container>
-	</requirements>
+    <requirements>
+        <container type="docker">wind910037:fv</container>
+    </requirements>
 	<command interpreter="Rscript">
 cise.R ${input_vcf} ${input_bat} ${sample_number}
 	</command>

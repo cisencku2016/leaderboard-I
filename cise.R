@@ -119,24 +119,22 @@ if(length(TDP)>5000){
 }
 write.arff(ttt,file="tempfile.arff")
 
-# out = system("java -cp /usr/share/java/weka.jar -mx1024m weka.clusterers.EM -t tempfile.arff -I 1000 -N -1 -X 10 -max -1 -ll-cv 5.0E-7 -ll-iter 5.0E-7 -M 5.0E-7 -K 500 -num-slots 3 -S 100",TRUE)
-# 
-# clusterNum = 0
-# 
-# for(c in 1 : length(out)) {
-#   if(out[c] == "Clustered Instances") {
-#     c = c + 1
-#     for(p in c : length(out)) {
-#       if(out[p] != "") {
-#         clusterNum = clusterNum + 1;
-#       }else {
-#         break
-#       }
-#     }
-#     break
-#   }
-# }
-clusterNum=2
+out = system("java -cp /usr/share/java/weka.jar -mx1024m weka.clusterers.EM -t tempfile.arff -I 1000 -N -1 -X 10 -max -1 -ll-cv 5.0E-7 -ll-iter 5.0E-7 -M 5.0E-7 -K 500 -num-slots 3 -S 100",TRUE)
+clusterNum = 0
+ 
+ for(c in 1 : length(out)) {
+   if(out[c] == "Clustered Instances") {
+     c = c + 1
+     for(p in c : length(out)) {
+       if(out[p] != "") {
+         clusterNum = clusterNum + 1;
+       }else {
+         break
+       }
+    }
+     break
+   }
+}
 runSKM= data.frame(TFA,BQ,NAD2)
 AAAA=SimpleKMeans(runSKM,Weka_control(N=clusterNum,S=100))
 
